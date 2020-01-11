@@ -1,0 +1,7 @@
+on post-fs-data
+    mkdir /data/vendor/display 0770 system system
+
+service livedisplay-hal-2-0-nvidia /system/bin/hw/lineage.livedisplay@2.0-service.nvidia
+    class hal
+    user system
+    group system

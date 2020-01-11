@@ -29,9 +29,9 @@ namespace vendor {
 namespace lineage {
 namespace livedisplay {
 namespace V2_0 {
-namespace samsung {
+namespace nvidia {
 
-static constexpr const char* kBacklightPath = "/sys/class/lcd/panel/power_reduce";
+static constexpr const char* kBacklightPath = "/sys/devices/platform/host1x/tegradc.0/smartdimmer/enable";
 
 bool AdaptiveBacklight::isSupported() {
     std::fstream backlight(kBacklightPath, backlight.in | backlight.out);
@@ -54,7 +54,7 @@ Return<bool> AdaptiveBacklight::setEnabled(bool enabled) {
     return WriteStringToFile(enabled ? "1" : "0", kBacklightPath, true);
 }
 
-}  // namespace samsung
+}  // namespace nvidia
 }  // namespace V2_0
 }  // namespace livedisplay
 }  // namespace lineage

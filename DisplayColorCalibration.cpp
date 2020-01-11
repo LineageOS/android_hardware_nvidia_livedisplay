@@ -30,7 +30,7 @@ namespace vendor {
 namespace lineage {
 namespace livedisplay {
 namespace V2_0 {
-namespace samsung {
+namespace nvidia {
 
 bool DisplayColorCalibration::isSupported() {
     std::fstream rgb(FILE_RGB, rgb.in | rgb.out);
@@ -40,11 +40,11 @@ bool DisplayColorCalibration::isSupported() {
 
 // Methods from ::vendor::lineage::livedisplay::V2_0::IDisplayColorCalibration follow.
 Return<int32_t> DisplayColorCalibration::getMaxValue() {
-    return 32768;
+    return 255;
 }
 
 Return<int32_t> DisplayColorCalibration::getMinValue() {
-    return 255;
+    return 0;
 }
 
 Return<void> DisplayColorCalibration::getCalibration(getCalibration_cb _hidl_cb) {
@@ -72,7 +72,7 @@ Return<bool> DisplayColorCalibration::setCalibration(const hidl_vec<int32_t>& rg
     return WriteStringToFile(Trim(contents), FILE_RGB, true);
 }
 
-}  // namespace samsung
+}  // namespace nvidia
 }  // namespace V2_0
 }  // namespace livedisplay
 }  // namespace lineage

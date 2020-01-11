@@ -29,9 +29,9 @@ namespace vendor {
 namespace lineage {
 namespace livedisplay {
 namespace V2_0 {
-namespace samsung {
+namespace nvidia {
 
-static constexpr const char* kREPath = "/sys/class/mdnie/mdnie/accessibility";
+static constexpr const char* kREPath = "/sys/devices/platform/host1x/tegradc.0/color_filter";
 
 // Methods from ::vendor::lineage::livedisplay::V2_0::ISunlightEnhancement follow.
 bool ReadingEnhancement::isSupported() {
@@ -47,16 +47,16 @@ Return<bool> ReadingEnhancement::isEnabled() {
         contents = Trim(contents);
     }
 
-    return !contents.compare("Current accessibility : DSI0 : GRAYSCALE") || !contents.compare("4");
+    return !contents.compare("Current accessibility : DSI0 : GRAYSCALE") || !contents.compare("54 182 18 54 182 18 54 182 18");
 }
 
 Return<bool> ReadingEnhancement::setEnabled(bool enabled) {
-    return WriteStringToFile(enabled ? "4" : "0", kREPath, true);
+    return WriteStringToFile(enabled ? "54 182 18 54 182 18 54 182 18" : "253 1009 16 1013 260 996 1020 4 228", kREPath, true);
 }
 
 // Methods from ::android::hidl::base::V1_0::IBase follow.
 
-}  // namespace samsung
+}  // namespace nvidia
 }  // namespace V2_0
 }  // namespace livedisplay
 }  // namespace lineage

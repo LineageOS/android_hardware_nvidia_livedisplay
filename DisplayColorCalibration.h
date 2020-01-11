@@ -23,13 +23,13 @@ namespace vendor {
 namespace lineage {
 namespace livedisplay {
 namespace V2_0 {
-namespace samsung {
+namespace nvidia {
 
 using ::android::hardware::hidl_vec;
 using ::android::hardware::Return;
 using ::android::hardware::Void;
 
-#define FILE_RGB "/sys/class/graphics/fb0/rgb"
+#define FILE_RGB "/sys/devices/platform/host1x/tegradc.0/color_filter_rgb"
 
 class DisplayColorCalibration : public IDisplayColorCalibration {
   public:
@@ -42,7 +42,7 @@ class DisplayColorCalibration : public IDisplayColorCalibration {
     Return<bool> setCalibration(const hidl_vec<int32_t>& rgb) override;
 };
 
-}  // namespace samsung
+}  // namespace nvidia
 }  // namespace V2_0
 }  // namespace livedisplay
 }  // namespace lineage
