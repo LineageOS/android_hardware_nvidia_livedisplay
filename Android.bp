@@ -12,10 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-cc_defaults {
-    name: "livedisplay_nvidia_defaults",
+cc_binary {
+    name: "vendor.lineage.livedisplay@2.0-service.nvidia",
+    init_rc: ["vendor.lineage.livedisplay@2.0-service.nvidia.rc"],
     defaults: ["hidl_defaults"],
     relative_install_path: "hw",
+    vendor: true,
     srcs: [
         "AdaptiveBacklight.cpp",
         "DisplayColorCalibration.cpp",
@@ -30,18 +32,4 @@ cc_defaults {
         "libutils",
         "vendor.lineage.livedisplay@2.0",
     ],
-}
-
-cc_binary {
-    name: "lineage.livedisplay@2.0-service.nvidia",
-    init_rc: ["lineage.livedisplay@2.0-service.nvidia.rc"],
-    defaults: ["livedisplay_nvidia_defaults"],
-    cflags: ["-DLIVES_IN_SYSTEM"],
-}
-
-cc_binary {
-    name: "vendor.lineage.livedisplay@2.0-service.nvidia",
-    init_rc: ["vendor.lineage.livedisplay@2.0-service.nvidia.rc"],
-    defaults: ["livedisplay_nvidia_defaults"],
-    vendor: true,
 }
