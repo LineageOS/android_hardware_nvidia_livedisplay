@@ -21,9 +21,11 @@ cc_binary {
     vendor: true,
     srcs: [
         "DisplayColorCalibration.cpp",
+        "LiveDisplay.cpp",
         "ReadingEnhancement.cpp",
         "service.cpp",
     ],
+    header_libs: ["generated_kernel_headers"],
     shared_libs: [
         "libbase",
         "libbinder",

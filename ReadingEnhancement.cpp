@@ -14,16 +14,7 @@
  * limitations under the License.
  */
 
-#include <android-base/file.h>
-#include <android-base/strings.h>
-
-#include <fstream>
-
 #include "ReadingEnhancement.h"
-
-using android::base::ReadFileToString;
-using android::base::Trim;
-using android::base::WriteStringToFile;
 
 namespace vendor {
 namespace lineage {
@@ -31,27 +22,32 @@ namespace livedisplay {
 namespace V2_0 {
 namespace nvidia {
 
-static constexpr const char* kREPath = "/sys/devices/platform/host1x/tegradc.0/color_filter";
-
-// Methods from ::vendor::lineage::livedisplay::V2_0::ISunlightEnhancement follow.
-bool ReadingEnhancement::isSupported() {
-    std::fstream re(kREPath, re.in | re.out);
-    return re.good();
-}
+static const std::vector<uint16_t> csc_grayscale = {54, 182, 18, 54, 182, 18, 54, 182, 18};
+static std::vector<uint16_t> csc_restore;
 
 // Methods from ::vendor::lineage::livedisplay::V2_0::IReadingEnhancement follow.
+bool ReadingEnhancement::isSupported() {
+    return mLiveDisplay->IsCMUSupported();
+}
+
 Return<bool> ReadingEnhancement::isEnabled() {
-    std::string contents;
+    std::vector<uint16_t> csc_current = mLiveDisplay->GetCMU();
 
-    if (ReadFileToString(kREPath, &contents)) {
-        contents = Trim(contents);
-    }
-
-    return !contents.compare("Current accessibility : DSI0 : GRAYSCALE") || !contents.compare("54 182 18 54 182 18 54 182 18");
+    return csc_current == csc_grayscale;
 }
 
 Return<bool> ReadingEnhancement::setEnabled(bool enabled) {
-    return WriteStringToFile(enabled ? "54 182 18 54 182 18 54 182 18" : "253 1009 16 1013 260 996 1020 4 228", kREPath, true);
+    bool ret = true;
+
+    if (enabled) {
+        csc_restore = mLiveDisplay->GetCMU();
+        ret = mLiveDisplay->SetCMU(csc_grayscale);
+    } else {
+        ret = mLiveDisplay->SetCMU(csc_restore);
+        csc_restore.clear();
+    }
+
+    return ret;
 }
 
 // Methods from ::android::hidl::base::V1_0::IBase follow.

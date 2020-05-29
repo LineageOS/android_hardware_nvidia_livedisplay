@@ -19,6 +19,8 @@
 
 #include <vendor/lineage/livedisplay/2.0/IDisplayColorCalibration.h>
 
+#include "LiveDisplay.h"
+
 namespace vendor {
 namespace lineage {
 namespace livedisplay {
@@ -29,10 +31,9 @@ using ::android::hardware::hidl_vec;
 using ::android::hardware::Return;
 using ::android::hardware::Void;
 
-#define FILE_RGB "/sys/devices/platform/host1x/tegradc.0/color_filter_rgb"
-
 class DisplayColorCalibration : public IDisplayColorCalibration {
   public:
+    DisplayColorCalibration(std::shared_ptr<LiveDisplay> liveDisplay): mLiveDisplay(liveDisplay) {}
     bool isSupported();
 
     // Methods from ::vendor::lineage::livedisplay::V2_0::IDisplayColorCalibration follow.
@@ -40,6 +41,9 @@ class DisplayColorCalibration : public IDisplayColorCalibration {
     Return<int32_t> getMinValue() override;
     Return<void> getCalibration(getCalibration_cb _hidl_cb) override;
     Return<bool> setCalibration(const hidl_vec<int32_t>& rgb) override;
+
+  private:
+    std::shared_ptr<LiveDisplay> mLiveDisplay;
 };
 
 }  // namespace nvidia
