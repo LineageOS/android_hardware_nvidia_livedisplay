@@ -20,6 +20,7 @@
 #include <binder/ProcessState.h>
 #include <hidl/HidlTransportSupport.h>
 
+#include "LiveDisplay.h"
 #include "DisplayColorCalibration.h"
 #include "ReadingEnhancement.h"
 
@@ -29,24 +30,33 @@ using android::sp;
 using android::status_t;
 using android::OK;
 
+using vendor::lineage::livedisplay::V2_0::nvidia::LiveDisplay;
 using vendor::lineage::livedisplay::V2_0::nvidia::DisplayColorCalibration;
 using vendor::lineage::livedisplay::V2_0::nvidia::ReadingEnhancement;
 
 int main() {
+    std::shared_ptr<LiveDisplay> liveDisplay;
     sp<DisplayColorCalibration> displayColorCalibration;
     sp<ReadingEnhancement> readingEnhancement;
     status_t status;
 
     LOG(INFO) << "LiveDisplay HAL service is starting.";
 
-    displayColorCalibration = new DisplayColorCalibration();
+    liveDisplay = std::make_shared<LiveDisplay>();
+    if (liveDisplay == nullptr) {
+        LOG(ERROR)
+            << "Can not create an instance of LiveDisplay HAL LiveDisplay Iface, exiting.";
+        goto shutdown;
+    }
+
+    displayColorCalibration = new DisplayColorCalibration(liveDisplay);
     if (displayColorCalibration == nullptr) {
         LOG(ERROR) << "Can not create an instance of LiveDisplay HAL DisplayColorCalibration "
                       "Iface, exiting.";
         goto shutdown;
     }
 
-    readingEnhancement = new ReadingEnhancement();
+    readingEnhancement = new ReadingEnhancement(liveDisplay);
     if (readingEnhancement == nullptr) {
         LOG(ERROR)
             << "Can not create an instance of LiveDisplay HAL ReadingEnhancement Iface, exiting.";

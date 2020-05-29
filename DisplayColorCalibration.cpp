@@ -14,17 +14,7 @@
  * limitations under the License.
  */
 
-#include <android-base/file.h>
-#include <android-base/strings.h>
-
-#include <fstream>
-
 #include "DisplayColorCalibration.h"
-
-using android::base::ReadFileToString;
-using android::base::Split;
-using android::base::Trim;
-using android::base::WriteStringToFile;
 
 namespace vendor {
 namespace lineage {
@@ -33,9 +23,7 @@ namespace V2_0 {
 namespace nvidia {
 
 bool DisplayColorCalibration::isSupported() {
-    std::fstream rgb(FILE_RGB, rgb.in | rgb.out);
-
-    return rgb.good();
+    return mLiveDisplay->IsCMUSupported();
 }
 
 // Methods from ::vendor::lineage::livedisplay::V2_0::IDisplayColorCalibration follow.
@@ -48,28 +36,26 @@ Return<int32_t> DisplayColorCalibration::getMinValue() {
 }
 
 Return<void> DisplayColorCalibration::getCalibration(getCalibration_cb _hidl_cb) {
+    std::vector<uint16_t> csc;
     std::vector<int32_t> rgb;
-    std::string tmp;
 
-    if (ReadFileToString(FILE_RGB, &tmp)) {
-        std::vector<std::string> colors = Split(Trim(tmp), " ");
-        for (const std::string& color : colors) {
-            rgb.push_back(std::stoi(color));
-        }
-    }
+    csc = mLiveDisplay->GetCMU();
+    rgb.push_back(csc.at(0));
+    rgb.push_back(csc.at(4));
+    rgb.push_back(csc.at(8));
 
     _hidl_cb(rgb);
     return Void();
 }
 
 Return<bool> DisplayColorCalibration::setCalibration(const hidl_vec<int32_t>& rgb) {
-    std::string contents;
+    std::vector<uint16_t> csc(9, 0);
 
-    for (const int32_t& color : rgb) {
-        contents += std::to_string(color) + " ";
-    }
+    csc.at(0) = static_cast<uint16_t>(rgb[0]);
+    csc.at(4) = static_cast<uint16_t>(rgb[1]);
+    csc.at(8) = static_cast<uint16_t>(rgb[2]);
 
-    return WriteStringToFile(Trim(contents), FILE_RGB, true);
+    return mLiveDisplay->SetCMU(csc);
 }
 
 }  // namespace nvidia

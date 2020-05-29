@@ -21,6 +21,8 @@
 #include <hidl/Status.h>
 #include <vendor/lineage/livedisplay/2.0/IReadingEnhancement.h>
 
+#include "LiveDisplay.h"
+
 namespace vendor {
 namespace lineage {
 namespace livedisplay {
@@ -37,13 +39,15 @@ using ::android::sp;
 
 class ReadingEnhancement : public IReadingEnhancement {
   public:
+    ReadingEnhancement(std::shared_ptr<LiveDisplay> liveDisplay): mLiveDisplay(liveDisplay) {}
     bool isSupported();
 
     // Methods from ::vendor::lineage::livedisplay::V2_0::IReadingEnhancement follow.
     Return<bool> isEnabled() override;
     Return<bool> setEnabled(bool) override;
 
-    // Methods from ::android::hidl::base::V1_0::IBase follow.
+  private:
+    std::shared_ptr<LiveDisplay> mLiveDisplay;
 };
 
 }  // namespace nvidia
