@@ -20,7 +20,6 @@
 #include <binder/ProcessState.h>
 #include <hidl/HidlTransportSupport.h>
 
-#include "AdaptiveBacklight.h"
 #include "DisplayColorCalibration.h"
 #include "ReadingEnhancement.h"
 
@@ -30,24 +29,15 @@ using android::sp;
 using android::status_t;
 using android::OK;
 
-using vendor::lineage::livedisplay::V2_0::nvidia::AdaptiveBacklight;
 using vendor::lineage::livedisplay::V2_0::nvidia::DisplayColorCalibration;
 using vendor::lineage::livedisplay::V2_0::nvidia::ReadingEnhancement;
 
 int main() {
-    sp<AdaptiveBacklight> adaptiveBacklight;
     sp<DisplayColorCalibration> displayColorCalibration;
     sp<ReadingEnhancement> readingEnhancement;
     status_t status;
 
     LOG(INFO) << "LiveDisplay HAL service is starting.";
-
-    adaptiveBacklight = new AdaptiveBacklight();
-    if (adaptiveBacklight == nullptr) {
-        LOG(ERROR)
-            << "Can not create an instance of LiveDisplay HAL AdaptiveBacklight Iface, exiting.";
-        goto shutdown;
-    }
 
     displayColorCalibration = new DisplayColorCalibration();
     if (displayColorCalibration == nullptr) {
@@ -64,15 +54,6 @@ int main() {
     }
 
     configureRpcThreadpool(1, true /*callerWillJoin*/);
-
-    if (adaptiveBacklight->isSupported()) {
-        status = adaptiveBacklight->registerAsService();
-        if (status != OK) {
-            LOG(ERROR) << "Could not register service for LiveDisplay HAL AdaptiveBacklight Iface ("
-                       << status << ")";
-            goto shutdown;
-        }
-    }
 
     if (displayColorCalibration->isSupported()) {
         status = displayColorCalibration->registerAsService();

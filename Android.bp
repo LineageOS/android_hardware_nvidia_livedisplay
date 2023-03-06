@@ -20,7 +20,6 @@ cc_binary {
     relative_install_path: "hw",
     vendor: true,
     srcs: [
-        "AdaptiveBacklight.cpp",
         "DisplayColorCalibration.cpp",
         "ReadingEnhancement.cpp",
         "service.cpp",
